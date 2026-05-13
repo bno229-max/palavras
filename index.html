@@ -25,21 +25,23 @@
             --slot-bg: #e2e8f0;
         }
 
-        /* BLOQUEIO DO MENU DE CELULAR (Evita o "Baixar/Compartilhar") */
+        /* ========================================================
+           BLOQUEIO ANTIFALHAS PARA CELULARES (TIRA O MENU DE BAIXAR)
+        ======================================================== */
         * { 
             box-sizing: border-box; 
             margin: 0; 
             padding: 0; 
             font-family: 'Nunito', sans-serif; 
-            -webkit-touch-callout: none; /* Bloqueia menu no iOS */
-            -webkit-user-select: none;   /* Bloqueia seleção no Safari */
-            -moz-user-select: none;      /* Bloqueia seleção no Firefox */
-            -ms-user-select: none;       /* Bloqueia seleção no Edge */
-            user-select: none;           /* Bloqueia seleção padrão */
-            touch-action: manipulation;  /* Evita zoom ao dar toque duplo acidental */
+            -webkit-touch-callout: none; /* Bloqueia menu de contexto no iOS */
+            -webkit-user-select: none;   /* Bloqueia seleção de texto no Safari */
+            -moz-user-select: none;      /* Bloqueia seleção de texto no Firefox */
+            -ms-user-select: none;       /* Bloqueia seleção de texto no Edge */
+            user-select: none;           /* Bloqueia seleção de texto em todos */
+            -webkit-user-drag: none;     /* Bloqueia arrasto nativo de imagens */
         }
 
-        /* Libera a digitação apenas no campo de nome */
+        /* Permite que apenas o campo de digitar o nome seja selecionável */
         input[type="text"] {
             -webkit-user-select: auto;
             user-select: auto;
@@ -54,6 +56,7 @@
             justify-content: center; 
             height: 100vh; 
             overflow: hidden; 
+            overscroll-behavior: none; /* Evita que o celular atualize a página puxando pra baixo */
         }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -111,7 +114,7 @@
         .image-container { height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; width: 100%; }
         .emoji-placeholder { width: 120px; height: 120px; background: linear-gradient(135deg, #a0e1ff 0%, #ffe3f1 100%); border-radius: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 0 rgba(0,0,0,0.05); border: 4px solid white; font-size: 4.5rem; animation: bounceIn 0.6s ease-out; }
 
-        .word-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 30px; padding: 0 10px;}
+        .word-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 10px; padding: 0 10px;}
         .letter-slot { width: 45px; height: 55px; background: var(--slot-bg); border-radius: 12px; box-shadow: inset 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; color: transparent; text-transform: uppercase; transition: all 0.2s; cursor: pointer; }
         .letter-slot.filled { background: var(--white); box-shadow: 0 4px 0 var(--slot-bg); color: var(--text-main); border: 2px solid var(--slot-bg); }
         .letter-slot.correct { background: var(--success); box-shadow: 0 4px 0 var(--success-dark); color: white; border-color: var(--success-dark); animation: letterPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -119,8 +122,10 @@
         .letter-slot.active-target { border: 3px dashed var(--secondary); background: rgba(127, 90, 240, 0.1); }
 
         .letters-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px; background: rgba(255, 255, 255, 0.5); border-radius: 20px; border: 3px dashed var(--slot-bg); width: 95%; margin: 0 auto; min-height: 100px; }
-        .pool-letter { width: 45px; height: 55px; background: var(--white); border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; cursor: pointer; color: var(--secondary); transition: transform 0.1s, box-shadow 0.1s; border: 2px solid #e2e8f0; animation: bounceIn 0.5s backwards; }
-        .pool-letter:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+        .pool-letter { width: 45px; height: 55px; background: var(--white); border-radius: 12px; box-shadow: 0 4px 0 #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; cursor: pointer; color: var(--secondary); border: 2px solid #e2e8f0; animation: bounceIn 0.5s backwards; }
+        
+        /* Classe usada quando a letra está sendo arrastada no celular */
+        .pool-letter.dragging { opacity: 0.8; transform: scale(1.2); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .pool-letter.selected { background: var(--secondary); color: white; border-color: var(--secondary-dark); transform: translateY(-5px); box-shadow: 0 8px 0 var(--secondary-dark); }
 
         @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.3); } 50% { opacity: 1; transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }
@@ -197,7 +202,7 @@
             </div>
             <div class="image-container" id="image-wrapper"></div>
             <div id="word-container" class="word-slots"></div>
-            <p style="font-weight: 700; color: var(--secondary); margin-bottom: 5px; font-size: 0.9rem;">Toque na letra e depois no espaço vazio:</p>
+            <p style="text-align: center; color: var(--text-light); font-weight: 900; margin-bottom: 10px; font-size: 0.9rem;">Toque ou arraste a letra:</p>
             <div id="letters-pool" class="letters-pool"></div>
         </section>
 
@@ -219,34 +224,22 @@
     </main>
 
     <script>
+        // CONFIGURAÇÃO DOS ÁUDIOS 
         const AUDIO_CONFIG = {
             errou: {
                 urls: ["https://www.myinstants.com/media/sounds/errou.mp3"],
                 volume: 0.3
             },
             perdeu: {
-                urls: [
-                    "https://www.myinstants.com/media/sounds/perdeu-galvao.mp3",
-                    "https://www.myinstants.com/media/sounds/perdeu-mp3.mp3",
-                    "https://www.myinstants.com/media/sounds/perdeu.mp3"
-                ],
+                urls: ["https://www.myinstants.com/media/sounds/perdeu-mp3.mp3", "https://www.myinstants.com/media/sounds/perdeu.mp3"],
                 volume: 0.4 
             },
             ganhou: {
-                urls: [
-                    "https://www.myinstants.com/media/sounds/salma-de-palmas-54653.mp3",
-                    "https://www.myinstants.com/media/sounds/salma-de-palmas.mp3",
-                    "https://www.myinstants.com/media/sounds/parabens-voce-ganhou.mp3"
-                ],
+                urls: ["https://www.myinstants.com/media/sounds/salma-de-palmas-54653.mp3"],
                 volume: 0.8 
             },
             olokinho: {
-                urls: [
-                    "https://www.myinstants.com/media/sounds/olokinho-meu-20939.mp3",
-                    "https://www.myinstants.com/media/sounds/olokinho-meu.mp3",
-                    "https://www.myinstants.com/media/sounds/oloco-meu.mp3",
-                    "https://www.myinstants.com/media/sounds/olokinho.mp3"
-                ],
+                urls: ["https://www.myinstants.com/media/sounds/olokinho-meu-20939.mp3", "https://www.myinstants.com/media/sounds/olokinho-meu.mp3"],
                 volume: 0.5 
             }
         };
@@ -339,7 +332,7 @@
                 snd.currentTime = 0; 
                 
                 let p = snd.play();
-                if(p !== undefined) p.catch(e => console.log("Áudio bloqueado ou não carregado", e));
+                if(p !== undefined) p.catch(e => console.log("Áudio bloqueado", e));
             },
 
             setFemaleVoice(utterance) {
@@ -386,11 +379,11 @@
         const StorageController = {
             data: { name: '', avatar: '👦', score: 0 },
             mockPlayers: [ { name: 'Lucas', avatar: '👦', score: 150 }, { name: 'Sofia', avatar: '👧', score: 120 } ],
-            load() { const saved = localStorage.getItem('kidAppProfileV15'); if (saved) { this.data = JSON.parse(saved); return true; } return false; },
+            load() { const saved = localStorage.getItem('kidAppProfileV16'); if (saved) { this.data = JSON.parse(saved); return true; } return false; },
             saveProfile(name, avatar) { this.data.name = name; this.data.avatar = avatar; this.save(); },
-            save() { localStorage.setItem('kidAppProfileV15', JSON.stringify(this.data)); this.updateUI(); },
+            save() { localStorage.setItem('kidAppProfileV16', JSON.stringify(this.data)); this.updateUI(); },
             addPoints(points) { this.data.score += points; this.save(); },
-            logout() { localStorage.removeItem('kidAppProfileV15'); this.data = { name: '', avatar: '👦', score: 0 }; },
+            logout() { localStorage.removeItem('kidAppProfileV16'); this.data = { name: '', avatar: '👦', score: 0 }; },
             updateUI() { document.getElementById('user-name-display').innerText = this.data.name; document.getElementById('user-avatar-display').innerText = this.data.avatar; document.getElementById('score-display').innerText = this.data.score; },
             renderRanking() {
                 const container = document.getElementById('ranking-container'); container.innerHTML = '';
@@ -536,7 +529,9 @@
                 if (slot.char === letterChar) {
                     slot.hidden = false;
                     UIController.fillSlot(slotIndex, letterChar);
-                    document.getElementById(poolElementId).remove();
+                    
+                    const poolEl = document.getElementById(poolElementId);
+                    if(poolEl) poolEl.remove();
                     
                     if(!this.gaps.every(g => !g.hidden)) { 
                         AudioEngine.play('olokinho'); 
@@ -630,16 +625,25 @@
                 const wordContainer = document.getElementById('word-container'); const poolContainer = document.getElementById('letters-pool');
                 wordContainer.innerHTML = ''; poolContainer.innerHTML = ''; let lettersToPool = [];
 
+                // Renderiza Slots (Espaços Vazios)
                 gaps.forEach((slot, index) => {
                     const div = document.createElement('div'); div.className = 'letter-slot'; div.dataset.index = index;
+                    
+                    // Impede menu de contexto (Baixar/Salvar) no celular ao segurar
+                    div.oncontextmenu = function() { return false; };
+
                     if (!slot.hidden) {
                         div.innerText = slot.char; div.classList.add('filled');
                     } else {
                         lettersToPool.push(slot.char);
-                        div.addEventListener('dragover', (e) => e.preventDefault());
-                        div.addEventListener('drop', (e) => { e.preventDefault(); GameEngine.handleLetterDrop(index, e.dataTransfer.getData('char'), e.dataTransfer.getData('poolId')); });
+                        
+                        // Clique Simples
                         div.addEventListener('click', () => {
-                            if (GameEngine.selectedLetterElement) { GameEngine.handleLetterDrop(index, GameEngine.selectedLetterElement.dataset.char, GameEngine.selectedLetterElement.id); GameEngine.selectedLetterElement = null; this.clearActiveTargets(); }
+                            if (GameEngine.selectedLetterElement) { 
+                                GameEngine.handleLetterDrop(index, GameEngine.selectedLetterElement.dataset.char, GameEngine.selectedLetterElement.id); 
+                                GameEngine.selectedLetterElement = null; 
+                                this.clearActiveTargets(); 
+                            }
                         });
                     }
                     wordContainer.appendChild(div);
@@ -650,11 +654,57 @@
                 for(let i=0; i < distractorsCount; i++) lettersToPool.push(alphabet[Math.floor(Math.random() * alphabet.length)]);
                 lettersToPool.sort(() => Math.random() - 0.5);
                 
+                // Renderiza Letras no Pool (Arrastáveis para Touch)
                 lettersToPool.forEach((char, index) => {
-                    const poolDiv = document.createElement('div'); poolDiv.className = 'pool-letter'; poolDiv.innerText = char; poolDiv.draggable = true; poolDiv.dataset.char = char; poolDiv.id = `pool-letter-${index}`;
+                    const poolDiv = document.createElement('div'); poolDiv.className = 'pool-letter'; poolDiv.innerText = char; poolDiv.dataset.char = char; poolDiv.id = `pool-letter-${index}`;
                     poolDiv.style.animationDelay = `${index * 0.05}s`;
-                    poolDiv.addEventListener('dragstart', (e) => { e.dataTransfer.setData('char', char); e.dataTransfer.setData('poolId', poolDiv.id); });
-                    poolDiv.addEventListener('click', () => { document.querySelectorAll('.pool-letter').forEach(el => el.classList.remove('selected')); poolDiv.classList.add('selected'); GameEngine.selectedLetterElement = poolDiv; this.clearActiveTargets(); document.querySelectorAll('.letter-slot:not(.filled)').forEach(slot => slot.classList.add('active-target')); });
+                    
+                    // Impede menu de baixar
+                    poolDiv.oncontextmenu = function() { return false; };
+
+                    // === TOUCH DRAG AND DROP (CELULAR) ===
+                    poolDiv.addEventListener('touchstart', (e) => {
+                        poolDiv.classList.add('dragging');
+                        GameEngine.selectedLetterElement = poolDiv;
+                    }, {passive: true});
+
+                    poolDiv.addEventListener('touchmove', (e) => {
+                        e.preventDefault(); // Impede scroll da tela e menu do iOS
+                        const touch = e.touches[0];
+                        poolDiv.style.position = 'fixed';
+                        poolDiv.style.zIndex = '9999';
+                        poolDiv.style.left = (touch.clientX - poolDiv.offsetWidth / 2) + 'px';
+                        poolDiv.style.top = (touch.clientY - poolDiv.offsetHeight / 2) + 'px';
+                    }, {passive: false});
+
+                    poolDiv.addEventListener('touchend', (e) => {
+                        poolDiv.classList.remove('dragging');
+                        poolDiv.style.position = '';
+                        poolDiv.style.zIndex = '';
+                        poolDiv.style.left = '';
+                        poolDiv.style.top = '';
+
+                        const touch = e.changedTouches[0];
+                        
+                        // Oculta temporariamente para achar o que está embaixo do dedo
+                        poolDiv.style.display = 'none'; 
+                        const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+                        poolDiv.style.display = 'flex';
+
+                        if (dropTarget && dropTarget.classList.contains('letter-slot') && !dropTarget.classList.contains('filled')) {
+                            GameEngine.handleLetterDrop(dropTarget.dataset.index, char, poolDiv.id);
+                        }
+                    });
+
+                    // === CLIQUE SIMPLES (Opção 2) ===
+                    poolDiv.addEventListener('click', () => { 
+                        document.querySelectorAll('.pool-letter').forEach(el => el.classList.remove('selected')); 
+                        poolDiv.classList.add('selected'); 
+                        GameEngine.selectedLetterElement = poolDiv; 
+                        this.clearActiveTargets(); 
+                        document.querySelectorAll('.letter-slot:not(.filled)').forEach(slot => slot.classList.add('active-target')); 
+                    });
+
                     poolContainer.appendChild(poolDiv);
                 });
             },
